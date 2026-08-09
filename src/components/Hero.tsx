@@ -28,7 +28,7 @@ export default function Hero() {
   return (
     <section 
       ref={heroRef}
-      className="w-full py-8 md:py-10 text-center px-4 sm:px-6 bg-gradient-to-b from-indigo-50/60 via-slate-50 to-slate-50 dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors will-change-[opacity,transform] motion-safe:opacity-[var(--scroll-opacity,1)] motion-safe:[transform:translateY(var(--scroll-translate,0px))]"
+      className="w-full py-8 md:py-10 text-center px-4 sm:px-6 bg-gradient-to-b from-indigo-50/60 via-slate-50 to-slate-50 dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950 border-b border-slate-200/40 dark:border-slate-800/40 transition-colors will-change-[opacity,transform] motion-safe:opacity-[var(--scroll-opacity,1)] motion-safe:[transform:translateY(var(--scroll-translate,0px))]"
     >
       <div className="max-w-4xl mx-auto space-y-4">
         {/* Academic pill badge */}
