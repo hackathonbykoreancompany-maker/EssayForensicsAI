@@ -93,39 +93,44 @@ export default function OverviewSummary({ score, stats }: OverviewSummaryProps) 
       </div>
 
       {/* Primary Evidence Passage Counters */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-center">
-          <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">Sentences analyzed</span>
-          <span className="text-[28px] font-extrabold text-slate-900 dark:text-white tracking-tight mt-0.5 leading-none">
-            {stats.totalSentences}
-          </span>
-        </div>
+      <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 mt-1">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3 leading-relaxed">
+          * Note: Sentence classifications flag local length and rhythm anomalies. The overall likelihood signal above incorporates additional passage-level metrics (e.g., vocabulary, burstiness) that cannot be mapped to individual sentences.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-center">
+            <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">Sentences analyzed</span>
+            <span className="text-[28px] font-extrabold text-slate-900 dark:text-white tracking-tight mt-0.5 leading-none">
+              {stats.totalSentences}
+            </span>
+          </div>
 
-        <div className="p-3 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-900/40 flex flex-col justify-center">
-          <span className="text-[13px] font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-rose-500"></span> Potentially AI-like
-          </span>
-          <span className="text-[28px] font-extrabold text-rose-900 dark:text-rose-200 tracking-tight mt-0.5 leading-none">
-            {stats.aiLikeCount}
-          </span>
-        </div>
+          <div className="p-3 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-900/40 flex flex-col justify-center">
+            <span className="text-[13px] font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-rose-500"></span> Potentially AI-like
+            </span>
+            <span className="text-[28px] font-extrabold text-rose-900 dark:text-rose-200 tracking-tight mt-0.5 leading-none">
+              {stats.aiLikeCount}
+            </span>
+          </div>
 
-        <div className="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/40 flex flex-col justify-center">
-          <span className="text-[13px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Likely human
-          </span>
-          <span className="text-[28px] font-extrabold text-emerald-900 dark:text-emerald-200 tracking-tight mt-0.5 leading-none">
-            {stats.humanLikeCount}
-          </span>
-        </div>
+          <div className="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/40 flex flex-col justify-center">
+            <span className="text-[13px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Likely human
+            </span>
+            <span className="text-[28px] font-extrabold text-emerald-900 dark:text-emerald-200 tracking-tight mt-0.5 leading-none">
+              {stats.humanLikeCount}
+            </span>
+          </div>
 
-        <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/40 flex flex-col justify-center">
-          <span className="text-[13px] font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span> Uncertain
-          </span>
-          <span className="text-[28px] font-extrabold text-amber-900 dark:text-amber-200 tracking-tight mt-0.5 leading-none">
-            {stats.uncertainCount}
-          </span>
+          <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/40 flex flex-col justify-center">
+            <span className="text-[13px] font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span> Uncertain
+            </span>
+            <span className="text-[28px] font-extrabold text-amber-900 dark:text-amber-200 tracking-tight mt-0.5 leading-none">
+              {stats.uncertainCount}
+            </span>
+          </div>
         </div>
       </div>
 
