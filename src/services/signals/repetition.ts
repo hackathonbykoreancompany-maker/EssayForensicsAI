@@ -1,9 +1,18 @@
 /**
  * repetition.ts
  *
- * Detects overused words and repeated n-gram phrases in an essay.
- * AI-generated text often repeats filler phrases and transitional
- * expressions at higher rates than human writing.
+ * Detects overused words, repeated n-gram phrases, and recurring
+ * construction patterns in an essay.
+ *
+ * NOTE: Individual word/trigram repetition counts were found to be
+ * inverted signals on the calibration dataset (human text scores higher
+ * than AI text) and are therefore NOT used in scoring. They are retained
+ * here for frontend display / evidence purposes.
+ *
+ * The new phraseRepetitionRate (ratio of repeated bigrams to total bigrams)
+ * provides an additional explainable measure of construction reuse,
+ * though its dataset separation is weak (d=0.197). It is exposed but
+ * not included in scoring.
  */
 
 /** A single word or phrase that appears more than once */
@@ -23,6 +32,19 @@ export interface RepetitionResult {
   repeatedTrigrams: RepeatedTerm[];
   /** Total unique content words analysed */
   uniqueWordCount: number;
+  /**
+   * Ratio of unique bigrams to total bigrams — bigram diversity.
+   * Range [0, 1]. Higher = more varied phrase constructions.
+   * AI text tends slightly higher (d=0.197, negligible separation).
+   * Exposed for evidence display; not used in scoring.
+   */
+  bigramDiversityRatio: number;
+  /**
+   * Rate of repeated bigrams (bigrams appearing >= 2 times / total bigrams).
+   * Range [0, 1]. Higher = more repeated constructions.
+   * Inverse of bigramDiversityRatio; provided for explainability.
+   */
+  phraseRepetitionRate: number;
 }
 
 // ----- helpers ---------------------------------------------------------------
@@ -98,7 +120,7 @@ function buildNgrams(tokens: string[], n: number): string[] {
  * Analyses word and phrase repetition in an essay.
  *
  * @param text - The raw essay text to analyse
- * @returns RepetitionResult with overused words, bigrams, and trigrams
+ * @returns RepetitionResult with overused words, bigrams, trigrams, and diversity metrics
  */
 export function analyzeRepetition(text: string): RepetitionResult {
   const allTokens = tokenize(text);
@@ -110,6 +132,8 @@ export function analyzeRepetition(text: string): RepetitionResult {
       repeatedBigrams: [],
       repeatedTrigrams: [],
       uniqueWordCount: 0,
+      bigramDiversityRatio: 0,
+      phraseRepetitionRate: 0,
     };
   }
 
@@ -122,19 +146,36 @@ export function analyzeRepetition(text: string): RepetitionResult {
   const bigrams = buildNgrams(allTokens, 2);
   const trigrams = buildNgrams(allTokens, 3);
 
-  const repeatedBigrams = toSortedTerms(
-    buildFrequencyMap(bigrams),
-    bigrams.length
-  );
+  const bigramFreqMap = buildFrequencyMap(bigrams);
+  const repeatedBigrams = toSortedTerms(bigramFreqMap, bigrams.length);
   const repeatedTrigrams = toSortedTerms(
     buildFrequencyMap(trigrams),
     trigrams.length
   );
+
+  // Bigram diversity metrics
+  const totalBigrams = bigrams.length;
+  const uniqueBigrams = bigramFreqMap.size;
+  const repeatedBigramCount = Array.from(bigramFreqMap.values()).filter(
+    (c) => c >= 2
+  ).length;
+
+  const bigramDiversityRatio =
+    totalBigrams > 0
+      ? parseFloat((uniqueBigrams / totalBigrams).toFixed(4))
+      : 0;
+
+  const phraseRepetitionRate =
+    totalBigrams > 0
+      ? parseFloat((repeatedBigramCount / totalBigrams).toFixed(4))
+      : 0;
 
   return {
     overusedWords,
     repeatedBigrams,
     repeatedTrigrams,
     uniqueWordCount: wordFreq.size,
+    bigramDiversityRatio,
+    phraseRepetitionRate,
   };
 }
