@@ -17,196 +17,150 @@ interface AnalysisResultProps {
 
 /**
  * Concise reason for a sentence card — one meaningful line.
- * Avoids repeating the same boilerplate on every card.
+ * Prioritises the most informative evidence signal.
  */
-function getCardReason(sentence: SentenceResult): string {
-  const { evidence, classification } = sentence;
+function conciseReason(s: SentenceResult): string {
+  const { evidence, classification, wordCount } = s;
 
-  if (evidence.contributesToUniformRhythm) {
-    return "Uniform rhythm detected";
+  if (evidence.contributesToUniformRhythm && evidence.passageLengthFlagged) {
+    return "Matches both length and rhythm uniformity patterns";
   }
-  if (evidence.passageLengthFlagged && evidence.passageRhythmFlagged) {
-    return "Consistent length and rhythm";
+  if (evidence.contributesToUniformRhythm) {
+    return "Contributes to the passage's uniform rhythm pattern";
   }
   if (evidence.passageLengthFlagged) {
-    return "Unusually consistent length";
-  }
-  if (evidence.passageRhythmFlagged) {
-    return "Part of uniform rhythm pattern";
+    return `${wordCount} words — consistent with passage average`;
   }
   if (evidence.overusedWordsInSentence.length > 0) {
-    return "Repeated construction detected";
+    const words = evidence.overusedWordsInSentence.slice(0, 2).join(", ");
+    return `Contains repeated wording: ${words}`;
   }
   if (classification === "human") {
-    return "Natural variation detected";
+    return "Shows natural structural variation";
   }
-  return "No strong anomaly detected";
-}
-
-function bucketLabel(bucket: string): string {
-  return bucket.charAt(0).toUpperCase() + bucket.slice(1);
-}
-
-function classificationLabel(classification: string): string {
-  switch (classification) {
-    case "ai-like": return "Potentially AI-like";
-    case "uncertain": return "Uncertain";
-    default: return "Likely Human";
-  }
+  return "Mixed signals — no single strong indicator";
 }
 
 export default function AnalysisResult({ result, onOpenMethodology }: AnalysisResultProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const { score, sentences } = result;
 
-  const sentences = result.sentences;
+  // Selected sentence for the inspector drawer
+  const [inspectedIndex, setInspectedIndex] = useState<number | null>(null);
+
+  // Summary counts from authoritative sentences[]
   const aiLikeCount = sentences.filter((s) => s.classification === "ai-like").length;
   const humanLikeCount = sentences.filter((s) => s.classification === "human").length;
   const uncertainCount = sentences.filter((s) => s.classification === "uncertain").length;
 
-  const handleSelectSentence = (index: number) => {
-    setSelectedIndex(index);
-    setInspectorOpen(true);
-  };
-
-  const handleCloseInspector = () => {
-    setInspectorOpen(false);
-  };
-
-  // Classification styles for sentence cards
-  const cardStyles = {
-    "ai-like": {
-      border: "border-l-rose-500",
-      badge: "bg-rose-950/60 text-rose-300 border-rose-800/40",
-    },
-    uncertain: {
-      border: "border-l-amber-500",
-      badge: "bg-amber-950/60 text-amber-300 border-amber-800/40",
-    },
-    human: {
-      border: "border-l-emerald-500",
-      badge: "bg-emerald-950/60 text-emerald-300 border-emerald-800/40",
-    },
-  };
+  // The sentence currently being inspected (for the drawer)
+  const inspectedSentence = inspectedIndex !== null ? sentences[inspectedIndex] ?? null : null;
 
   return (
     <div className="space-y-5">
-      {/* 1. Hero Verdict */}
-      <div className="result-section">
-        <HeroVerdict score={result.score} />
+      {/* ── 1. VERDICT ── */}
+      <div className="section-fade-up" style={{ animationDelay: "0ms" }}>
+        <HeroVerdict score={score} />
       </div>
 
-      {/* 2. Compact Summary Row */}
-      <div className="result-section">
-        <div className="flex items-center justify-center gap-6 flex-wrap px-4 py-3 rounded-xl glass-panel shadow-xl">
-          <div className="text-center">
-            <span className="text-[18px] font-extrabold text-white leading-none">{sentences.length}</span>
-            <span className="text-[11px] text-slate-400 block mt-0.5 font-medium">Sentences analyzed</span>
-          </div>
-          <span className="w-px h-8 bg-slate-800" />
-          <div className="text-center">
-            <span className="text-[18px] font-extrabold text-rose-400 leading-none">{aiLikeCount}</span>
-            <span className="text-[11px] text-slate-400 block mt-0.5 font-medium">AI-like</span>
-          </div>
-          <div className="text-center">
-            <span className="text-[18px] font-extrabold text-emerald-400 leading-none">{humanLikeCount}</span>
-            <span className="text-[11px] text-slate-400 block mt-0.5 font-medium">Human-like</span>
-          </div>
-          <div className="text-center">
-            <span className="text-[18px] font-extrabold text-amber-400 leading-none">{uncertainCount}</span>
-            <span className="text-[11px] text-slate-400 block mt-0.5 font-medium">Uncertain</span>
-          </div>
-          {(result.wordCount > 0 || result.characterCount > 0) && (
-            <>
-              <span className="w-px h-8 bg-slate-800" />
-              <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
-                {result.wordCount > 0 && <span>{result.wordCount.toLocaleString()} words</span>}
-                {result.characterCount > 0 && <span>{result.characterCount.toLocaleString()} chars</span>}
-              </div>
-            </>
-          )}
+      {/* Compact stats bar */}
+      <div className="section-fade-up flex items-center justify-center gap-4 text-[12px] font-semibold" style={{ animationDelay: "80ms" }}>
+        <span className="text-slate-400">{sentences.length} sentences</span>
+        <span className="text-slate-700 dark:text-slate-600">|</span>
+        <span className="text-rose-400">{aiLikeCount} AI-like</span>
+        <span className="text-slate-700 dark:text-slate-600">|</span>
+        <span className="text-amber-400">{uncertainCount} uncertain</span>
+        <span className="text-slate-700 dark:text-slate-600">|</span>
+        <span className="text-emerald-400">{humanLikeCount} human</span>
+      </div>
+
+      {/* ── 2. WHY ── */}
+      <div className="section-fade-up" style={{ animationDelay: "160ms" }}>
+        <WhyThisResult score={score} />
+      </div>
+
+      {/* ── 3. TOP SIGNALS ── */}
+      {score.flags.length > 0 && (
+        <div className="section-fade-up" style={{ animationDelay: "240ms" }}>
+          <DetectedSignals score={score} />
         </div>
-      </div>
+      )}
 
-      {/* 3. Why This Result? */}
-      <div className="result-section">
-        <WhyThisResult score={result.score} />
-      </div>
-
-      {/* 4. Detected Signals (top 3) */}
-      <div className="result-section">
-        <DetectedSignals score={result.score} />
-      </div>
-
-      {/* 5. Essay Overview (compact highlighter) */}
-      <div className="result-section">
+      {/* ── 4. ESSAY OVERVIEW (compact highlighter) ── */}
+      <div className="section-fade-up" style={{ animationDelay: "320ms" }}>
         <SentenceHighlighter
           result={result}
-          selectedIndex={selectedIndex}
-          onSelectSentence={handleSelectSentence}
+          selectedIndex={inspectedIndex}
+          onSelectSentence={(index) => setInspectedIndex(index)}
         />
       </div>
 
-      {/* 6. Sentence-Level Evidence Cards */}
-      <div className="result-section">
-        <div className="rounded-2xl glass-panel p-5 shadow-xl">
-          <div className="pb-3 border-b border-slate-800/80 mb-4">
-            <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400">
-              Sentence-Level Evidence
+      {/* ── 5. SENTENCE EVIDENCE CARDS ── */}
+      <div className="section-fade-up" style={{ animationDelay: "400ms" }}>
+        <div className="rounded-2xl glass-panel p-5 shadow-xl space-y-3">
+          <div className="pb-3 border-b border-slate-700/50">
+            <h3 className="text-[15px] font-bold text-white tracking-tight">
+              Sentence Evidence
             </h3>
             <p className="text-[12px] text-slate-400 mt-0.5">
-              See which sentences contributed to the overall signal
+              Tap a card to inspect detailed evidence for that sentence
             </p>
           </div>
 
-          <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
-            {sentences.map((sentence, index) => {
-              const styles = cardStyles[sentence.classification];
-              const isSelected = selectedIndex === index;
-              const preview = sentence.sentence.length > 80
-                ? sentence.sentence.slice(0, 80) + "…"
-                : sentence.sentence;
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
+            {sentences.map((s, i) => {
+              const isSelected = inspectedIndex === i;
+
+              let cardStyle = "bg-emerald-950/20 border-emerald-800/30 hover:bg-emerald-950/40";
+              let statusDot = "bg-emerald-500";
+              let classLabel = "Human";
+
+              if (s.classification === "ai-like") {
+                cardStyle = "bg-rose-950/25 border-rose-800/30 hover:bg-rose-950/45";
+                statusDot = "bg-rose-500";
+                classLabel = "AI-like";
+              } else if (s.classification === "uncertain") {
+                cardStyle = "bg-amber-950/20 border-amber-800/30 hover:bg-amber-950/40";
+                statusDot = "bg-amber-500";
+                classLabel = "Uncertain";
+              }
 
               return (
                 <button
-                  key={index}
+                  key={i}
                   type="button"
-                  onClick={() => handleSelectSentence(index)}
-                  className={`w-full text-left p-3.5 rounded-xl border border-l-[3px] transition-all ${styles.border} ${
-                    isSelected
-                      ? "ring-2 ring-indigo-500 ring-offset-1 ring-offset-slate-950 border-slate-700 bg-slate-800/60"
-                      : "border-slate-800/80 glass-panel-subtle hover:bg-slate-800/40"
+                  onClick={() => setInspectedIndex(i)}
+                  className={`p-3 rounded-xl border text-left transition-all ${cardStyle} ${
+                    isSelected ? "ring-2 ring-indigo-500 ring-offset-1 ring-offset-slate-950 shadow-sm" : ""
                   }`}
                 >
-                  {/* Top row: sentence number + classification badge */}
+                  {/* Header row */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-[12px] font-bold font-mono text-slate-400">
-                      Sentence {String(index + 1).padStart(2, "0")}
+                    <span className="text-[12px] font-bold text-slate-300 font-mono">
+                      #{i + 1}
                     </span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${styles.badge}`}>
-                      {classificationLabel(sentence.classification)}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${statusDot}`} />
+                      <span className="text-[10px] font-semibold text-slate-400">
+                        {classLabel}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Sentence preview */}
-                  <p className="text-[12px] text-slate-200 leading-relaxed mb-2 line-clamp-2">
-                    &ldquo;{preview}&rdquo;
+                  <p className="text-[12px] text-slate-300 line-clamp-2 leading-relaxed mb-2">
+                    {s.sentence}
                   </p>
 
-                  {/* Bottom row: metadata + reason + inspect */}
-                  <div className="flex items-center justify-between gap-2 text-[11px]">
-                    <div className="flex items-center gap-2 text-slate-400 font-medium">
-                      <span>{sentence.wordCount} words</span>
-                      <span>·</span>
-                      <span>{bucketLabel(sentence.lengthBucket)}</span>
-                    </div>
-                    <span className="text-slate-400 font-medium hidden sm:inline">
-                      {getCardReason(sentence)}
-                    </span>
-                    <span className="text-indigo-400 font-semibold flex-shrink-0">
-                      Inspect →
-                    </span>
+                  {/* Metadata */}
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 border-t border-slate-800/50">
+                    <span>{s.wordCount} words · {s.lengthBucket}</span>
+                    <span className="text-indigo-400 font-semibold">Inspect →</span>
                   </div>
+
+                  {/* Concise reason */}
+                  <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                    {conciseReason(s)}
+                  </p>
                 </button>
               );
             })}
@@ -214,53 +168,39 @@ export default function AnalysisResult({ result, onOpenMethodology }: AnalysisRe
         </div>
       </div>
 
-      {/* 7. Advanced Analysis (collapsed) */}
-      <div className="result-section">
-        <AdvancedAnalysis result={result} />
-      </div>
-
-      {/* 8. Methodology + Limitations */}
-      <div className="result-section">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* Methodology link */}
-          {onOpenMethodology && (
-            <button
-              type="button"
-              onClick={onOpenMethodology}
-              className="text-[12px] font-medium text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              How this analysis works
-            </button>
-          )}
-
-          {/* Limitation statement */}
-          <details className="text-[11px] text-slate-400 group">
-            <summary className="cursor-pointer font-medium hover:text-slate-300 transition-colors select-none">
-              Limitations
-            </summary>
-            <p className="mt-2 text-slate-400 leading-relaxed max-w-xl">
-              This system provides an evidence-based likelihood signal based on measurable linguistic patterns.
-              It cannot definitively determine authorship and may produce false positives or false negatives.
-              Results should be used as one input among many in any evaluation process.
-            </p>
-          </details>
-        </div>
-      </div>
-
-      {/* Sentence Inspector Drawer */}
-      {inspectorOpen && selectedIndex !== null && sentences[selectedIndex] && (
+      {/* ── 6. INSPECT SELECTED SENTENCE (drawer) ── */}
+      {inspectedSentence && inspectedIndex !== null && (
         <SentenceInspector
-          sentence={sentences[selectedIndex]}
-          sentenceIndex={selectedIndex}
+          sentence={inspectedSentence}
+          sentenceIndex={inspectedIndex}
           passageMean={result.sentenceLength.mean}
           sentenceLength={result.sentenceLength}
           isUniformRhythm={result.sentenceRhythm.isUniformRhythm}
-          onClose={handleCloseInspector}
+          onClose={() => setInspectedIndex(null)}
         />
       )}
+
+      {/* ── 7. ADVANCED ANALYSIS (collapsed) ── */}
+      <div className="section-fade-up" style={{ animationDelay: "480ms" }}>
+        <AdvancedAnalysis result={result} />
+      </div>
+
+      {/* ── METHODOLOGY / LIMITATIONS ── */}
+      <div className="section-fade-up text-center py-4" style={{ animationDelay: "560ms" }}>
+        <p className="text-[11px] text-slate-500 leading-relaxed max-w-lg mx-auto">
+          This analysis uses statistical patterns only, not neural AI detectors.
+          Results indicate unusual structural patterns, not proof of AI authorship.
+        </p>
+        {onOpenMethodology && (
+          <button
+            type="button"
+            onClick={onOpenMethodology}
+            className="mt-2 text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            View Full Methodology →
+          </button>
+        )}
+      </div>
     </div>
   );
 }

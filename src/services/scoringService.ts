@@ -93,20 +93,20 @@ export function calculateScore(input: ScoringInput): ScoringResult {
   const hasSample  = sampleSize >= 3;
 
   // ── 1. Sentence length stdDev ──────────────────────────────────────────
-  // AI median=6.81, Human median=9.49. (Medium separation d~0.45)
+  // AI median=6.81, Human median=9.49.
   let sentenceLengthScore = 0;
   if (hasSample) {
     if (input.sentenceLength.stdDev < 7) {
-      sentenceLengthScore = 10;
+      sentenceLengthScore = 15;
       flags.push("Low sentence length variance");
     } else if (input.sentenceLength.stdDev < 9) {
-      sentenceLengthScore = 6;
+      sentenceLengthScore = 9;
       flags.push("Below-average sentence length variance");
     }
   }
 
   // ── 2. Rhythm CV ──────────────────────────────────────────────────────
-  // AI median=0.336, Human median=0.465. (Medium separation d~0.40)
+  // AI median=0.336, Human median=0.465.
   let sentenceRhythmScore = 0;
   const cv = input.sentenceRhythm.coefficientOfVariation;
   if (hasSample) {
@@ -123,15 +123,15 @@ export function calculateScore(input: ScoringInput): ScoringResult {
   // Both overusedWords and repeatedTrigrams are inverted on this dataset.
   const repetitionScore = 0;
 
-  // ── 4. Sentence complexity CV (strongest signal, d=0.939) ─────────────
+  // ── 4. Sentence complexity CV (strongest new signal, d=0.939) ─────────
   // AI median=0.897, Human median=1.345. Lower CV = more uniform = AI-like.
   let sentenceComplexityScore = 0;
   if (hasSample && input.sentenceComplexity.complexityCV > 0) {
     if (input.sentenceComplexity.complexityCV < 1.00) {
-      sentenceComplexityScore = 40;
+      sentenceComplexityScore = 30;
       flags.push("Suspiciously uniform sentence complexity");
     } else if (input.sentenceComplexity.complexityCV < 1.35) {
-      sentenceComplexityScore = 24;
+      sentenceComplexityScore = 18;
       flags.push("Below-average sentence complexity variation");
     }
   }
@@ -141,10 +141,10 @@ export function calculateScore(input: ScoringInput): ScoringResult {
   let burstinessScore = 0;
   if (hasSample && input.burstiness.score > 0) {
     if (input.burstiness.score < 0.14) {
-      burstinessScore = 15;
+      burstinessScore = 20;
       flags.push("Low sentence burstiness");
     } else if (input.burstiness.score < 0.22) {
-      burstinessScore = 9;
+      burstinessScore = 12;
       flags.push("Below-average sentence burstiness");
     }
   }

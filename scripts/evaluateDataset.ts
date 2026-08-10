@@ -12,7 +12,7 @@
  *   npm run evaluate
  *   npm run evaluate -- --threshold 60
  *
- * Default threshold (calibrated against 29 145-row dataset): 60
+ * Default threshold (calibrated against 29 145-row dataset): 50
  * See data/README.md for CSV format details.
  */
 
@@ -32,7 +32,7 @@ const DATASET_PATH = path.resolve(__dirname, "../data/essays.csv");
  * after adding burstiness, lexical diversity, and sentence complexity signals.
  * Override with --threshold <n>.
  */
-const DEFAULT_THRESHOLD = 60;
+const DEFAULT_THRESHOLD = 50;
 const MIN_RECOMMENDED_ROWS = 20;
 
 // ---------------------------------------------------------------------------
@@ -318,7 +318,7 @@ function main(): void {
     console.log(`\n${hr()}`);
     console.log(`  OVERALL METRICS`);
     console.log(hr());
-    console.log(`  Accuracy  : ${pct(correct, total).padEnd(8)}  (${correct}/${total} correct)`);
+    console.log(`  Accuracy  : ${pct(correct, total).padEnd(8)} (${(accuracy * 100).toFixed(1)}% | ${correct}/${total} correct)`);
     console.log(`  Precision : ${pct(tp, tp+fp).padEnd(8)}  (of predicted AI, actually AI)`);
     console.log(`  Recall    : ${pct(tp, tp+fn).padEnd(8)}  (of actual AI essays caught)`);
     console.log(`  F1        : ${(f1 * 100).toFixed(1)}%`);

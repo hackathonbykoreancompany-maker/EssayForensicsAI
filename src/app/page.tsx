@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import SidebarNav from "../components/SidebarNav";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
 import EssayInput from "../components/EssayInput";
 import AnalysisResult from "../components/AnalysisResult";
 import MethodologyModal from "../components/MethodologyModal";
@@ -58,30 +59,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors">
-      {/* Top Bar / Header */}
-      <header className="w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 transition-colors">
-        <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-              Linguistic Forensic Workspace
-            </span>
-          </div>
-          <div className="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
-            <button type="button" onClick={handleOpenMethodology} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-              Methodology
-            </button>
-            <button type="button" onClick={handleOpenAbout} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-              About
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Top Navbar */}
+      <Navbar
+        onOpenMethodology={handleOpenMethodology}
+        onOpenAbout={handleOpenAbout}
+      />
 
-      {/* Main 3-Column Workspace Container */}
-      <main id="analyzer" className="flex-1 max-w-[1700px] w-full mx-auto px-4 sm:px-6 py-6">
+      {/* Hero Section */}
+      <Hero />
+
+      {/* Main Workspace Container */}
+      <main id="analyzer" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Error Banner */}
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm flex items-center justify-between shadow-xs">
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
               <span className="text-rose-500 font-bold">⚠️</span>
               <span>{error}</span>
@@ -95,53 +86,46 @@ export default function Home() {
           </div>
         )}
 
-        {/* 3-COLUMN FUTURISTIC GRID LAYOUT */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          {/* COLUMN 1: Minimal Left Navigation */}
-          <SidebarNav
-            onOpenMethodology={handleOpenMethodology}
-            onOpenAbout={handleOpenAbout}
-          />
-
-          {/* COLUMN 2: Large Essay Paste/Write Area (Center) */}
-          <div className="flex-1 w-full space-y-3 lg:sticky lg:top-20">
-            <div className="flex items-center justify-between px-1">
-              <h2 className="text-[12px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase">
-                Input Workspace
+        {/* 2-Column Responsive Desktop Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* LEFT COLUMN: Input Workspace */}
+          <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
+            <div>
+              <h2 className="text-[13px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase">
+                Your Essay
               </h2>
             </div>
             <EssayInput onAnalyze={handleAnalyze} isLoading={isLoading} />
           </div>
 
-          {/* COLUMN 3: Analysis / Result Area (Right) */}
-          <div className="w-full lg:w-[480px] xl:w-[540px] 2xl:w-[600px] flex-shrink-0 space-y-3">
-            <div className="flex items-center justify-between px-1">
-              <h2 className="text-[12px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase">
-                Forensic Analysis
+          <div className="lg:col-span-7 space-y-4">
+            <div>
+              <h2 className="text-[13px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase">
+                Analysis
               </h2>
             </div>
             {result ? (
-              <AnalysisResult result={result} onOpenMethodology={handleOpenMethodology} />
+              <AnalysisResult result={result} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 p-6 md:p-10 text-center flex flex-col items-center justify-center space-y-4 min-h-[460px] shadow-xs overflow-hidden">
+              <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 p-6 md:p-12 text-center flex flex-col items-center justify-center space-y-4 min-h-[460px] shadow-xs overflow-hidden">
                 <AnalysisEmptyStateVisual />
-                <div className="max-w-xs space-y-1.5 relative z-10">
+                <div className="max-w-md space-y-1.5 relative z-10">
                   <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                     Ready to analyze your essay
                   </h3>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Paste your essay in the center workspace and click <strong>&quot;Analyze Essay&quot;</strong> to generate forensic evidence.
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+                    Paste your essay on the left and click <strong>&quot;Analyze Essay&quot;</strong> to see which writing patterns stand out.
                   </p>
                 </div>
-                <div className="pt-2 flex flex-wrap justify-center gap-1.5">
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <div className="pt-2 flex flex-wrap justify-center gap-2">
+                  <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                     ✓ Sentence Patterns
                   </span>
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    ✓ Vocabulary & Repetition
+                  <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    ✓ Vocabulary &amp; Repetition
                   </span>
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    ✓ Structural Rhythm
+                  <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    ✓ Passage-Level Evidence
                   </span>
                 </div>
               </div>
@@ -158,13 +142,13 @@ export default function Home() {
       />
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/80 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-950/50 mt-8">
-        <div className="max-w-[1700px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
+      <footer className="border-t border-slate-200/80 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-950/50 mt-12">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300">
             <span>EssayForensics AI</span>
             <span>&mdash; Academic Linguistic Analysis Platform</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-500 text-[11px]">
+          <div className="flex items-center gap-4 text-slate-500">
             <button type="button" onClick={handleOpenMethodology} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
               Methodology
             </button>
