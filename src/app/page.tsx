@@ -6,6 +6,7 @@ import EssayInput from "../components/EssayInput";
 import AnalysisResult from "../components/AnalysisResult";
 import MethodologyModal from "../components/MethodologyModal";
 import AnalysisEmptyStateVisual from "../components/AnalysisEmptyStateVisual";
+import ForensicLoadingState from "../components/ForensicLoadingState";
 import type { EssayAnalysisResult } from "../services/essayAnalysisService";
 
 export default function Home() {
@@ -54,6 +55,14 @@ export default function Home() {
   const handleOpenAbout = () => {
     setModalTitle("About EssayForensics Platform");
     setIsMethodologyOpen(true);
+  };
+
+  const handleResetAnalysis = () => {
+    setResult(null);
+    const editor = document.querySelector("textarea");
+    if (editor) {
+      editor.focus();
+    }
   };
 
   return (
@@ -148,15 +157,20 @@ export default function Home() {
               <span className="text-[11px] font-bold text-stone-400 tracking-wider uppercase">
                 Forensic Analysis
               </span>
-              {result && (
-                <span className="text-[11px] text-stone-300 font-medium flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Report Ready
-                </span>
+              {result && !isLoading && (
+                <button
+                  type="button"
+                  onClick={handleResetAnalysis}
+                  className="text-[11px] text-stone-400 hover:text-stone-100 font-medium flex items-center gap-1 transition-colors"
+                >
+                  <span>&larr; Analyze Another Essay</span>
+                </button>
               )}
             </div>
 
-            {result ? (
+            {isLoading ? (
+              <ForensicLoadingState />
+            ) : result ? (
               <AnalysisResult result={result} onOpenMethodology={handleOpenMethodology} />
             ) : (
               <div className="surface-card rounded-2xl p-6 sm:p-8 text-center flex flex-col items-center justify-center space-y-4 min-h-[480px]">
