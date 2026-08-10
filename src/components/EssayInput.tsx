@@ -73,7 +73,7 @@ export default function EssayInput({ onAnalyze, isLoading }: EssayInputProps) {
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste your essay here for statistical stylometry and authorship inspection..."
             rows={15}
-            className="w-full flex-1 p-5 rounded-xl bg-[#0e1017]/90 border border-stone-800 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:border-stone-400 text-sm sm:text-base leading-relaxed font-sans resize-y min-h-[460px] transition-colors"
+            className="w-full flex-1 p-5 rounded-xl bg-[#0e1017]/70 backdrop-blur-md border border-stone-800 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:border-stone-400 text-sm sm:text-base leading-relaxed font-sans resize-y min-h-[460px] transition-colors"
           />
 
           {!text && (

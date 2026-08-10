@@ -51,7 +51,7 @@ export default function SentenceHighlighter({
       </div>
 
       {/* Essay text with inline sentence highlighting */}
-      <div className="text-[13px] sm:text-[14px] leading-[1.8] text-stone-200 p-3.5 rounded-xl bg-[#0e1017]/90 border border-stone-800 max-h-[360px] overflow-y-auto">
+      <div className="text-[13px] sm:text-[14px] leading-[1.8] text-stone-200 p-3.5 rounded-xl bg-[#0e1017]/70 backdrop-blur-md border border-stone-800 max-h-[360px] overflow-y-auto">
         {sentences.map((s: SentenceResult, i: number) => {
           const isSelected = selectedIndex === i;
 
