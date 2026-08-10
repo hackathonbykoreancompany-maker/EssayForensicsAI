@@ -8,16 +8,16 @@ interface HeroVerdictProps {
 }
 
 export default function HeroVerdict({ score }: HeroVerdictProps) {
-  let statusLabel = "Likely Human Writing";
-  let accentColor = "text-emerald-400";
-  let ringColor = "#10b981"; // emerald-500
-  let badgeStyle = "bg-emerald-950/60 text-emerald-300 border-emerald-800/60";
+  let statusLabel = "Likely Human Authorship";
+  let accentColor = "text-stone-100";
+  let ringColor = "#78716c"; // stone-500
+  let badgeStyle = "bg-stone-800 text-stone-200 border-stone-700";
 
   if (score.overallScore >= 60) {
     statusLabel = "Potentially AI-Generated";
-    accentColor = "text-rose-400";
-    ringColor = "#f43f5e"; // rose-500
-    badgeStyle = "bg-rose-950/60 text-rose-300 border-rose-800/60";
+    accentColor = "text-red-400";
+    ringColor = "#ef4444"; // red-500
+    badgeStyle = "bg-red-950/60 text-red-300 border-red-800/60";
   } else if (score.overallScore >= 30) {
     statusLabel = "Uncertain / Mixed Signals";
     accentColor = "text-amber-400";
@@ -30,11 +30,11 @@ export default function HeroVerdict({ score }: HeroVerdictProps) {
   return (
     <div className="surface-card rounded-2xl p-5 text-center">
       {/* Section label */}
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
           Executive Verdict
         </span>
-        <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md border ${badgeStyle}`}>
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded border ${badgeStyle}`}>
           {confidenceLabel}
         </span>
       </div>
@@ -49,10 +49,10 @@ export default function HeroVerdict({ score }: HeroVerdictProps) {
           } as React.CSSProperties}
         >
           <div className="score-ring-inner">
-            <span className={`text-3xl font-extrabold tracking-tight leading-none ${accentColor}`}>
+            <span className={`text-3xl font-bold tracking-tight leading-none ${accentColor}`}>
               {score.overallScore}%
             </span>
-            <span className="text-[9px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">
+            <span className="text-[9px] font-medium text-stone-400 mt-1 uppercase tracking-wider">
               AI Likelihood
             </span>
           </div>
@@ -64,8 +64,8 @@ export default function HeroVerdict({ score }: HeroVerdictProps) {
         {statusLabel}
       </h2>
       
-      <p className="text-[11px] text-slate-400">
-        Based on 6 calibrated statistical stylometry metrics
+      <p className="text-[11px] text-stone-400">
+        Calculated from 6 calibrated stylometric features
       </p>
     </div>
   );

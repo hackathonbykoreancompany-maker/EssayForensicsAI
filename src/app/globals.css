@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @layer base {
   :root {
-    --bg-main: #090d16;
-    --bg-card: #0e131f;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --bg-main: #0c0d11;
+    --bg-card: #14161d;
+    --text-main: #f5f5f4;
+    --text-muted: #a8a29e;
     --border-color: rgba(255, 255, 255, 0.08);
   }
 
   .dark {
-    --bg-main: #090d16;
-    --bg-card: #0e131f;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --bg-main: #0c0d11;
+    --bg-card: #14161d;
+    --text-main: #f5f5f4;
+    --text-muted: #a8a29e;
     --border-color: rgba(255, 255, 255, 0.08);
   }
 }
@@ -27,7 +27,7 @@
 }
 
 html {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
@@ -35,61 +35,58 @@ html {
 }
 
 body {
-  background-color: #080c14;
+  background-color: #0c0d11;
   background-image: 
-    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(14, 22, 38, 0.75) 0%, rgba(7, 10, 18, 0.95) 100%),
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(20, 22, 30, 0.88) 0%, rgba(10, 11, 15, 0.98) 100%),
     url('/forensics_bg.png');
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  color: #f1f5f9;
+  color: #f5f5f4;
   min-height: 100vh;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ─── Premium Scrollbar ───────────────────────────────────────────────── */
+/* ─── Premium Subtle Scrollbar ────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* ─── Solid & Refined Material Surfaces ───────────────────────────────── */
+/* ─── Charcoal & Graphite Solid Material Surfaces ─────────────────────── */
 .surface-card {
-  background: rgba(13, 18, 29, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+  background: rgba(18, 20, 28, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
 .surface-card-hover {
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 .surface-card-hover:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(16, 22, 36, 0.88);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(23, 26, 36, 0.94);
 }
 
 .surface-subtle {
-  background: rgba(17, 24, 39, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(24, 27, 37, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ─── Score Radial Gauge ──────────────────────────────────────────────── */
+/* ─── Refined Editorial Score Gauge ──────────────────────────────────── */
 @keyframes score-ring-fill {
   from { --score-draw: 0; }
   to   { --score-draw: var(--score-progress); }
@@ -103,29 +100,29 @@ body {
 
 .score-ring {
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: 136px;
+  height: 136px;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: conic-gradient(
     var(--ring-color) calc(var(--score-draw) * 1%),
-    rgba(255, 255, 255, 0.06) 0%
+    rgba(255, 255, 255, 0.07) 0%
   );
-  animation: score-ring-fill 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: score-ring-fill 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .score-ring-inner {
-  width: 114px;
-  height: 114px;
+  width: 112px;
+  height: 112px;
   border-radius: 9999px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0b0f19;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #11131a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ─── Drawer & Overlays ───────────────────────────────────────────────── */
@@ -135,7 +132,7 @@ body {
 }
 
 .drawer-panel {
-  animation: drawer-slide-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: drawer-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes drawer-overlay-in {
@@ -151,7 +148,7 @@ body {
 @keyframes section-fade-up {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -160,25 +157,25 @@ body {
 }
 
 .section-fade-up {
-  animation: section-fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: section-fade-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-fill-mode: both;
 }
 
 /* ─── Interactive Sentence Highlighting ───────────────────────────────── */
 .sentence-highlight {
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
-  border-radius: 0.375rem;
-  padding: 0.15rem 0.35rem;
-  margin: 0 0.05rem;
+  transition: background-color 0.15s ease;
+  border-radius: 0.3rem;
+  padding: 0.12rem 0.3rem;
+  margin: 0 0.04rem;
   cursor: pointer;
   display: inline;
 }
 
 .sentence-highlight:hover {
-  filter: brightness(1.15);
+  filter: brightness(1.2);
 }
 
 .sentence-selected {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid #e7e5e4;
   outline-offset: 1px;
 }
