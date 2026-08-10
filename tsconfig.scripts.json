@@ -1,0 +1,27 @@
+{
+  /**
+   * tsconfig.scripts.json
+   *
+   * Used exclusively by ts-node when running scripts/ files.
+   * Overrides the Next.js-oriented root tsconfig with settings
+   * that work in a plain Node.js CommonJS environment.
+   */
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": ".ts-scripts-out",
+    "target": "ES2020",
+    "esModuleInterop": true
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "src/services/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/app",
+    "src/components"
+  ]
+}

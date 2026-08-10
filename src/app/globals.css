@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+@layer base {
+  :root {
+    --bg-main: #060913;
+    --bg-card: rgba(11, 17, 32, 0.75);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: rgba(51, 65, 85, 0.5);
+  }
+
+  .dark {
+    --bg-main: #060913;
+    --bg-card: rgba(11, 17, 32, 0.75);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: rgba(51, 65, 85, 0.5);
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: #060913;
+  background-image: radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.4) 0%, rgba(6, 9, 19, 0.95) 70%), url('/forensics_bg.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #f1f5f9;
+  min-height: 100vh;
+}
+
+/* Glassmorphism Panel Container Utility */
+.glass-panel {
+  background: rgba(10, 16, 31, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-subtle {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.8);
+}
+
+/* Interactive Highlight Styles for Sentences */
+.sentence-highlight {
+  transition: all 0.15s ease-in-out;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  margin: 0 0.0625rem;
+  cursor: pointer;
+  display: inline;
+}
+
+.sentence-highlight:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle Pulsing indicator for active sentence selection */
+@keyframes highlight-pulse {
+  0%, 100% { outline-color: rgba(99, 102, 241, 0.6); }
+  50% { outline-color: rgba(99, 102, 241, 1); }
+}
+
+.sentence-selected {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+  animation: highlight-pulse 2s infinite ease-in-out;
+}
+
+/* Score Ring Animation */
+@keyframes score-ring-fill {
+  from { --score-progress: 0; }
+}
+
+@property --score-progress {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.score-ring {
+  --score-progress: 0;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--ring-color) calc(var(--score-progress) * 3.6deg),
+    rgba(30, 41, 59, 0.4) calc(var(--score-progress) * 3.6deg)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: score-ring-fill 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
+}
+
+.score-ring-inner {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Drawer slide-in animation */
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes drawer-overlay-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.drawer-panel {
+  animation: drawer-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.drawer-overlay {
+  animation: drawer-overlay-fade 0.2s ease-out forwards;
+}
+
+/* Section stagger animation */
+@keyframes section-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-section {
+  animation: section-fade-up 0.5s ease-out both;
+}
+
+.result-section:nth-child(1) { animation-delay: 0.05s; }
+.result-section:nth-child(2) { animation-delay: 0.12s; }
+.result-section:nth-child(3) { animation-delay: 0.19s; }
+.result-section:nth-child(4) { animation-delay: 0.26s; }
+.result-section:nth-child(5) { animation-delay: 0.33s; }
+.result-section:nth-child(6) { animation-delay: 0.40s; }
+.result-section:nth-child(7) { animation-delay: 0.47s; }
+.result-section:nth-child(8) { animation-delay: 0.54s; }
