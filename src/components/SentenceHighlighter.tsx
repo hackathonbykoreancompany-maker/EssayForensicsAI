@@ -9,14 +9,6 @@ interface SentenceHighlighterProps {
   onSelectSentence: (index: number) => void;
 }
 
-/**
- * Compact essay-text-only highlighter.
- *
- * Renders the original essay text with subtle classification-based
- * color tints on each sentence. Click a sentence to inspect it.
- *
- * No cards, no stats, no evidence — just highlighted essay text.
- */
 export default function SentenceHighlighter({
   result,
   selectedIndex,
@@ -25,55 +17,49 @@ export default function SentenceHighlighter({
   const { sentences } = result;
 
   if (!sentences || sentences.length === 0) {
-    return (
-      <div className="rounded-2xl glass-panel p-5 shadow-xl">
-        <p className="text-sm text-slate-400 italic">
-          No sentences to display.
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="rounded-2xl glass-panel p-5 shadow-xl space-y-3">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap pb-3 border-b border-slate-700/50">
+    <div className="surface-card rounded-2xl p-5 space-y-3.5">
+      {/* Header with compact forensic legend */}
+      <div className="flex items-center justify-between gap-4 flex-wrap pb-3 border-b border-slate-800/80">
         <div>
-          <h3 className="text-[15px] font-bold text-white tracking-tight">
-            Essay Overview
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            Passage Stylometry Map
           </h3>
-          <p className="text-[12px] text-slate-400 mt-0.5">
-            Click any sentence to inspect its forensic evidence
+          <p className="text-[11px] text-slate-400 mt-0.5">
+            Click any sentence to inspect specific evidence indicators
           </p>
         </div>
 
-        {/* Compact legend */}
-        <div className="flex items-center gap-2.5 text-[11px] font-semibold">
-          <span className="inline-flex items-center gap-1">
+        {/* Legend */}
+        <div className="flex items-center gap-3 text-[11px] font-medium">
+          <span className="inline-flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-rose-500" />
-            <span className="text-slate-400">AI-like</span>
+            <span className="text-slate-300">AI-like</span>
           </span>
-          <span className="inline-flex items-center gap-1">
+          <span className="inline-flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-500" />
-            <span className="text-slate-400">Uncertain</span>
+            <span className="text-slate-300">Uncertain</span>
           </span>
-          <span className="inline-flex items-center gap-1">
+          <span className="inline-flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-slate-400">Human</span>
+            <span className="text-slate-300">Human</span>
           </span>
         </div>
       </div>
 
       {/* Essay text with inline sentence highlighting */}
-      <div className="text-[14px] leading-[1.85] text-slate-200">
+      <div className="text-[13px] sm:text-[14px] leading-[1.8] text-slate-200 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 max-h-[360px] overflow-y-auto">
         {sentences.map((s: SentenceResult, i: number) => {
           const isSelected = selectedIndex === i;
 
-          let bgClass = "bg-emerald-950/20 hover:bg-emerald-950/40";
+          let bgClass = "bg-emerald-950/30 hover:bg-emerald-900/40 text-emerald-200";
           if (s.classification === "ai-like") {
-            bgClass = "bg-rose-950/30 hover:bg-rose-950/50";
+            bgClass = "bg-rose-950/40 hover:bg-rose-900/50 text-rose-200";
           } else if (s.classification === "uncertain") {
-            bgClass = "bg-amber-950/25 hover:bg-amber-950/45";
+            bgClass = "bg-amber-950/35 hover:bg-amber-900/45 text-amber-200";
           }
 
           return (
@@ -86,10 +72,10 @@ export default function SentenceHighlighter({
                 if (e.key === "Enter" || e.key === " ") onSelectSentence(i);
               }}
               className={`sentence-highlight ${bgClass} ${
-                isSelected ? "sentence-selected" : ""
+                isSelected ? "sentence-selected ring-1 ring-sky-400" : ""
               }`}
             >
-              {s.sentence}
+              {s.sentence}{" "}
             </span>
           );
         })}

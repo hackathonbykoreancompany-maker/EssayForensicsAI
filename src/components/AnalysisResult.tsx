@@ -17,76 +17,87 @@ interface AnalysisResultProps {
 
 /**
  * Concise reason for a sentence card — one meaningful line.
- * Prioritises the most informative evidence signal.
  */
 function conciseReason(s: SentenceResult): string {
   const { evidence, classification, wordCount } = s;
 
   if (evidence.contributesToUniformRhythm && evidence.passageLengthFlagged) {
-    return "Matches both length and rhythm uniformity patterns";
+    return "Matches both length & rhythm uniformity patterns";
   }
   if (evidence.contributesToUniformRhythm) {
-    return "Contributes to the passage's uniform rhythm pattern";
+    return "Contributes to uniform cadence sequence";
   }
   if (evidence.passageLengthFlagged) {
-    return `${wordCount} words — consistent with passage average`;
+    return `${wordCount} words — narrow variance with mean`;
   }
   if (evidence.overusedWordsInSentence.length > 0) {
     const words = evidence.overusedWordsInSentence.slice(0, 2).join(", ");
-    return `Contains repeated wording: ${words}`;
+    return `Repeated phrase tokens: ${words}`;
   }
   if (classification === "human") {
-    return "Shows natural structural variation";
+    return "Natural syntactic and length variation";
   }
-  return "Mixed signals — no single strong indicator";
+  return "Mixed stylometric indicators";
 }
 
 export default function AnalysisResult({ result, onOpenMethodology }: AnalysisResultProps) {
   const { score, sentences } = result;
 
-  // Selected sentence for the inspector drawer
   const [inspectedIndex, setInspectedIndex] = useState<number | null>(null);
 
-  // Summary counts from authoritative sentences[]
   const aiLikeCount = sentences.filter((s) => s.classification === "ai-like").length;
   const humanLikeCount = sentences.filter((s) => s.classification === "human").length;
   const uncertainCount = sentences.filter((s) => s.classification === "uncertain").length;
 
-  // The sentence currently being inspected (for the drawer)
   const inspectedSentence = inspectedIndex !== null ? sentences[inspectedIndex] ?? null : null;
 
   return (
-    <div className="space-y-5">
-      {/* ── 1. VERDICT ── */}
-      <div className="section-fade-up" style={{ animationDelay: "0ms" }}>
+    <div className="space-y-4">
+      {/* 1. Executive Verdict */}
+      <div className="section-fade-up">
         <HeroVerdict score={score} />
       </div>
 
-      {/* Compact stats bar */}
-      <div className="section-fade-up flex items-center justify-center gap-4 text-[12px] font-semibold" style={{ animationDelay: "80ms" }}>
-        <span className="text-slate-400">{sentences.length} sentences</span>
-        <span className="text-slate-700 dark:text-slate-600">|</span>
-        <span className="text-rose-400">{aiLikeCount} AI-like</span>
-        <span className="text-slate-700 dark:text-slate-600">|</span>
-        <span className="text-amber-400">{uncertainCount} uncertain</span>
-        <span className="text-slate-700 dark:text-slate-600">|</span>
-        <span className="text-emerald-400">{humanLikeCount} human</span>
+      {/* 2. Statistical Sentence Distribution Bar */}
+      <div className="surface-card rounded-xl px-4 py-2.5 flex items-center justify-around text-xs font-medium text-slate-300">
+        <div className="flex items-center gap-1.5">
+          <span className="text-slate-400 font-normal">Total:</span>
+          <strong className="text-white font-bold">{sentences.length}</strong>
+        </div>
+        <span className="text-slate-700">&bull;</span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-rose-500" />
+          <span className="text-rose-300 font-semibold">{aiLikeCount}</span>
+          <span className="text-slate-400">AI-like</span>
+        </div>
+        <span className="text-slate-700">&bull;</span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
+          <span className="text-amber-300 font-semibold">{uncertainCount}</span>
+          <span className="text-slate-400">Uncertain</span>
+        </div>
+        <span className="text-slate-700">&bull;</span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="text-emerald-300 font-semibold">{humanLikeCount}</span>
+          <span className="text-slate-400">Human</span>
+        </div>
       </div>
 
-      {/* ── 2. WHY ── */}
-      <div className="section-fade-up" style={{ animationDelay: "160ms" }}>
+      {/* 3. Executive Reasoning Summary */}
+      <div className="section-fade-up">
         <WhyThisResult score={score} />
       </div>
 
-      {/* ── 3. TOP SIGNALS ── */}
+      {/* 4. Top Signals */}
       {score.flags.length > 0 && (
-        <div className="section-fade-up" style={{ animationDelay: "240ms" }}>
+        <div className="section-fade-up">
           <DetectedSignals score={score} />
         </div>
       )}
 
-      {/* ── 4. ESSAY OVERVIEW (compact highlighter) ── */}
-      <div className="section-fade-up" style={{ animationDelay: "320ms" }}>
+      {/* 5. Passage Stylometry Map */}
+      <div className="section-fade-up">
         <SentenceHighlighter
           result={result}
           selectedIndex={inspectedIndex}
@@ -94,32 +105,37 @@ export default function AnalysisResult({ result, onOpenMethodology }: AnalysisRe
         />
       </div>
 
-      {/* ── 5. SENTENCE EVIDENCE CARDS ── */}
-      <div className="section-fade-up" style={{ animationDelay: "400ms" }}>
-        <div className="rounded-2xl glass-panel p-5 shadow-xl space-y-3">
-          <div className="pb-3 border-b border-slate-700/50">
-            <h3 className="text-[15px] font-bold text-white tracking-tight">
-              Sentence Evidence
-            </h3>
-            <p className="text-[12px] text-slate-400 mt-0.5">
-              Tap a card to inspect detailed evidence for that sentence
-            </p>
+      {/* 6. Sentence Evidence Cards Grid */}
+      <div className="section-fade-up">
+        <div className="surface-card rounded-2xl p-5 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                Sentence Breakdown
+              </h3>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Select any block for granular forensic breakdown
+              </p>
+            </div>
+            <span className="text-[10px] font-mono text-slate-400">
+              {sentences.length} units
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[360px] overflow-y-auto pr-1">
             {sentences.map((s, i) => {
               const isSelected = inspectedIndex === i;
 
-              let cardStyle = "bg-emerald-950/20 border-emerald-800/30 hover:bg-emerald-950/40";
+              let cardBorder = "border-emerald-900/40 bg-emerald-950/20 hover:bg-emerald-950/40";
               let statusDot = "bg-emerald-500";
               let classLabel = "Human";
 
               if (s.classification === "ai-like") {
-                cardStyle = "bg-rose-950/25 border-rose-800/30 hover:bg-rose-950/45";
+                cardBorder = "border-rose-900/40 bg-rose-950/25 hover:bg-rose-950/45";
                 statusDot = "bg-rose-500";
                 classLabel = "AI-like";
               } else if (s.classification === "uncertain") {
-                cardStyle = "bg-amber-950/20 border-amber-800/30 hover:bg-amber-950/40";
+                cardBorder = "border-amber-900/40 bg-amber-950/20 hover:bg-amber-950/40";
                 statusDot = "bg-amber-500";
                 classLabel = "Uncertain";
               }
@@ -129,36 +145,32 @@ export default function AnalysisResult({ result, onOpenMethodology }: AnalysisRe
                   key={i}
                   type="button"
                   onClick={() => setInspectedIndex(i)}
-                  className={`p-3 rounded-xl border text-left transition-all ${cardStyle} ${
-                    isSelected ? "ring-2 ring-indigo-500 ring-offset-1 ring-offset-slate-950 shadow-sm" : ""
+                  className={`p-3 rounded-xl border text-left transition-all ${cardBorder} ${
+                    isSelected ? "ring-2 ring-sky-500 shadow-md" : ""
                   }`}
                 >
-                  {/* Header row */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-[12px] font-bold text-slate-300 font-mono">
+                    <span className="text-[11px] font-bold text-slate-300 font-mono">
                       #{i + 1}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${statusDot}`} />
-                      <span className="text-[10px] font-semibold text-slate-400">
+                      <span className={`w-1.5 h-1.5 rounded-full ${statusDot}`} />
+                      <span className="text-[10px] font-semibold text-slate-300">
                         {classLabel}
                       </span>
                     </div>
                   </div>
 
-                  {/* Sentence preview */}
-                  <p className="text-[12px] text-slate-300 line-clamp-2 leading-relaxed mb-2">
+                  <p className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed mb-2">
                     {s.sentence}
                   </p>
 
-                  {/* Metadata */}
-                  <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 border-t border-slate-800/50">
-                    <span>{s.wordCount} words · {s.lengthBucket}</span>
-                    <span className="text-indigo-400 font-semibold">Inspect →</span>
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1.5 border-t border-slate-800/60">
+                    <span>{s.wordCount} words &bull; {s.lengthBucket}</span>
+                    <span className="text-sky-400 font-semibold">Inspect &rarr;</span>
                   </div>
 
-                  {/* Concise reason */}
-                  <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  <p className="text-[10px] text-slate-400 mt-1 leading-snug">
                     {conciseReason(s)}
                   </p>
                 </button>
@@ -168,7 +180,7 @@ export default function AnalysisResult({ result, onOpenMethodology }: AnalysisRe
         </div>
       </div>
 
-      {/* ── 6. INSPECT SELECTED SENTENCE (drawer) ── */}
+      {/* 7. Sentence Inspector Drawer */}
       {inspectedSentence && inspectedIndex !== null && (
         <SentenceInspector
           sentence={inspectedSentence}
@@ -180,24 +192,23 @@ export default function AnalysisResult({ result, onOpenMethodology }: AnalysisRe
         />
       )}
 
-      {/* ── 7. ADVANCED ANALYSIS (collapsed) ── */}
-      <div className="section-fade-up" style={{ animationDelay: "480ms" }}>
+      {/* 8. Advanced Forensic Analysis (Collapsed by default) */}
+      <div className="section-fade-up">
         <AdvancedAnalysis result={result} />
       </div>
 
-      {/* ── METHODOLOGY / LIMITATIONS ── */}
-      <div className="section-fade-up text-center py-4" style={{ animationDelay: "560ms" }}>
-        <p className="text-[11px] text-slate-500 leading-relaxed max-w-lg mx-auto">
-          This analysis uses statistical patterns only, not neural AI detectors.
-          Results indicate unusual structural patterns, not proof of AI authorship.
+      {/* 9. Methodology Note */}
+      <div className="surface-subtle rounded-xl p-4 text-center space-y-1">
+        <p className="text-[11px] text-slate-400 leading-relaxed">
+          EssayForensics AI uses deterministic statistical markers (variance, rhythm CV, MATTR, Fano factor), not generative AI approximations.
         </p>
         {onOpenMethodology && (
           <button
             type="button"
             onClick={onOpenMethodology}
-            className="mt-2 text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="text-[11px] font-semibold text-sky-400 hover:text-sky-300 transition-colors"
           >
-            View Full Methodology →
+            Review Scientific Methodology &rarr;
           </button>
         )}
       </div>

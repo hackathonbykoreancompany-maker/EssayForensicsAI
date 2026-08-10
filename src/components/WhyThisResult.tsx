@@ -7,30 +7,26 @@ interface WhyThisResultProps {
   score: ScoringResult;
 }
 
-/**
- * Maps backend flag strings to plain-English phrases for the explanation.
- * Only the first matching phrase for each signal category is used.
- */
 const FLAG_TO_PHRASE: Record<string, string> = {
   "Low sentence length variance": "unusually consistent sentence lengths",
   "Below-average sentence length variance": "relatively low variation in sentence length",
-  "Suspiciously uniform sentence rhythm": "a highly regular sentence rhythm",
+  "Suspiciously uniform sentence rhythm": "a highly regular sentence rhythm pattern",
   "Below-average sentence rhythm variation": "below-average rhythm variation across sentences",
-  "Suspiciously uniform sentence complexity": "uniformly structured sentence complexity",
-  "Below-average sentence complexity variation": "limited variation in sentence complexity",
+  "Suspiciously uniform sentence complexity": "uniformly structured syntactic complexity",
+  "Below-average sentence complexity variation": "limited structural variation in sentence syntax",
   "Low sentence burstiness": "minimal variation in sentence cadence",
   "Below-average sentence burstiness": "below-average sentence burstiness",
-  "Unusually high lexical diversity (AI pattern)": "a systematically varied vocabulary pattern",
+  "Unusually high lexical diversity (AI pattern)": "a systematically elevated vocabulary distribution",
   "Elevated lexical diversity": "elevated vocabulary diversity across the passage",
 };
 
 function buildExplanation(flags: string[], overallScore: number): string {
   if (flags.length === 0 && overallScore < 30) {
-    return "The passage shows natural variation in sentence structure, rhythm, and vocabulary — patterns typically associated with human writing.";
+    return "The passage demonstrates natural structural variation in sentence length, rhythm, and vocabulary distribution — patterns characteristic of human composition.";
   }
 
   if (flags.length === 0) {
-    return "No individual signals were strongly triggered, but the combination of measured patterns produced a moderate signal.";
+    return "No individual signals were strongly triggered, but composite stylometric measurements produced a moderate likelihood value.";
   }
 
   const phrases = flags
@@ -39,29 +35,33 @@ function buildExplanation(flags: string[], overallScore: number): string {
     .slice(0, 3);
 
   if (phrases.length === 0) {
-    return "Several linguistic patterns in this passage contributed to the overall signal.";
+    return "Multiple subtle stylometric indicators in this text contributed to the overall signal assessment.";
   }
 
   if (phrases.length === 1) {
-    return `The passage shows ${phrases[0]}. This pattern contributed to the overall likelihood signal.`;
+    return `The document exhibits ${phrases[0]}. This statistical marker contributed to the overall likelihood score.`;
   }
 
   const last = phrases.pop()!;
-  return `The passage shows ${phrases.join(", ")} and ${last}. These patterns contributed to the overall likelihood signal.`;
+  return `The document exhibits ${phrases.join(", ")} alongside ${last}. These statistical markers contributed to the overall likelihood score.`;
 }
 
 export default function WhyThisResult({ score }: WhyThisResultProps) {
   const explanation = buildExplanation(score.flags, score.overallScore);
 
   return (
-    <div className="rounded-2xl glass-panel p-5 shadow-xl">
-      <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
-        <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Why this result?
-      </h3>
-      <p className="text-sm text-slate-200 leading-relaxed">
+    <div className="surface-card rounded-2xl p-5 space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="w-5 h-5 rounded-md bg-slate-800 border border-slate-700 flex items-center justify-center text-sky-400">
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+          Analysis Summary
+        </h3>
+      </div>
+      <p className="text-xs sm:text-sm text-slate-200 leading-relaxed pl-7">
         {explanation}
       </p>
     </div>

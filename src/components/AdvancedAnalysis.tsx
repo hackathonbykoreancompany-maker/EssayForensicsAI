@@ -9,18 +9,16 @@ interface AdvancedAnalysisProps {
   result: EssayAnalysisResult;
 }
 
-/* ── Shared sub-components ─── */
-
 const BUCKET_STYLES: Record<SentenceLengthBucket, string> = {
-  short: "bg-sky-950/50 text-sky-300 border-sky-800/40",
-  medium: "bg-violet-950/50 text-violet-300 border-violet-800/40",
-  long: "bg-amber-950/50 text-amber-300 border-amber-800/40",
+  short: "bg-sky-950/60 text-sky-300 border-sky-800/60",
+  medium: "bg-slate-800/80 text-slate-200 border-slate-700/60",
+  long: "bg-amber-950/60 text-amber-300 border-amber-800/60",
 };
 
 function BucketPill({ bucket, index }: { bucket: SentenceLengthBucket; index: number }) {
   return (
     <span
-      className={`inline-block w-3 h-3.5 rounded-sm border ${BUCKET_STYLES[bucket]}`}
+      className={`inline-block w-3.5 h-3.5 rounded-sm border ${BUCKET_STYLES[bucket]}`}
       title={`Sentence ${index + 1}: ${bucket}`}
     />
   );
@@ -57,23 +55,21 @@ function TermTable({ terms, emptyMessage }: { terms: RepeatedTerm[]; emptyMessag
   );
 }
 
-/* ── Stat row helper ─── */
 function StatRow({ label, value, unit }: { label: string; value: string | number; unit?: string }) {
   return (
     <div className="flex items-center justify-between py-2 border-b border-slate-800/60 last:border-b-0">
       <span className="text-[12px] text-slate-400 font-medium">{label}</span>
-      <span className="text-[13px] text-white font-semibold">
+      <span className="text-[12px] text-white font-semibold">
         {value}{unit ? ` ${unit}` : ""}
       </span>
     </div>
   );
 }
 
-/* ── Subsection wrapper ─── */
 function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-2">
-      <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 pb-1 border-b border-slate-800">
+    <div className="space-y-2.5">
+      <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 pb-1 border-b border-slate-800">
         {title}
       </h4>
       {children}
@@ -81,35 +77,31 @@ function SubSection({ title, children }: { title: string; children: React.ReactN
   );
 }
 
-/* ── Main component ─── */
-
 export default function AdvancedAnalysis({ result }: AdvancedAnalysisProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { sentenceLength, sentenceRhythm, repetition, burstiness, lexicalDiversity, sentenceComplexity, score } = result;
 
-  // Signal breakdown for score contribution chart
   const breakdownItems = [
-    { name: "Sentence Complexity", value: score.breakdown.sentenceComplexityScore, max: 30, color: "bg-violet-500" },
-    { name: "Burstiness", value: score.breakdown.burstinessScore, max: 20, color: "bg-sky-500" },
-    { name: "Lexical Diversity", value: score.breakdown.lexicalDiversityScore, max: 20, color: "bg-indigo-500" },
-    { name: "Sentence Length", value: score.breakdown.sentenceLengthScore, max: 15, color: "bg-amber-500" },
-    { name: "Sentence Rhythm", value: score.breakdown.sentenceRhythmScore, max: 15, color: "bg-rose-500" },
-    { name: "Repetition", value: score.breakdown.repetitionScore, max: 0, color: "bg-slate-600" },
+    { name: "Syntactic Complexity", value: score.breakdown.sentenceComplexityScore, max: 30, color: "bg-sky-500" },
+    { name: "Sentence Burstiness", value: score.breakdown.burstinessScore, max: 20, color: "bg-teal-500" },
+    { name: "Lexical Diversity (MATTR)", value: score.breakdown.lexicalDiversityScore, max: 20, color: "bg-indigo-500" },
+    { name: "Length Variance", value: score.breakdown.sentenceLengthScore, max: 15, color: "bg-amber-500" },
+    { name: "Cadence Uniformity", value: score.breakdown.sentenceRhythmScore, max: 15, color: "bg-rose-500" },
   ];
 
   return (
-    <div className="rounded-2xl glass-panel shadow-xl overflow-hidden">
+    <div className="surface-card rounded-2xl overflow-hidden">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-800/40 transition-colors"
       >
         <div>
-          <h3 className="text-[14px] font-bold text-white tracking-tight">
-            Advanced Analysis
+          <h3 className="text-sm font-bold text-white tracking-tight">
+            Detailed Statistical Breakdown
           </h3>
-          <p className="text-[12px] text-slate-400 mt-0.5">
-            Technical evidence and statistical breakdown
+          <p className="text-[11px] text-slate-400 mt-0.5">
+            View granular stylometric metrics, vocabulary distribution, and score contributions
           </p>
         </div>
         <svg
@@ -126,27 +118,27 @@ export default function AdvancedAnalysis({ result }: AdvancedAnalysisProps) {
       {isOpen && (
         <div className="px-5 pb-5 space-y-6 border-t border-slate-800/80 pt-4">
           {/* A. Sentence Length Analysis */}
-          <SubSection title="A. Sentence Length Analysis">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <SubSection title="1. Sentence Length Distribution">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[
-                { label: "Mean", value: sentenceLength.mean, unit: "words" },
-                { label: "Std Dev", value: sentenceLength.stdDev, unit: "words" },
-                { label: "Min", value: sentenceLength.min, unit: "words" },
-                { label: "Max", value: sentenceLength.max, unit: "words" },
+                { label: "Mean Length", value: sentenceLength.mean, unit: "words" },
+                { label: "Std Deviation", value: sentenceLength.stdDev, unit: "words" },
+                { label: "Minimum", value: sentenceLength.min, unit: "words" },
+                { label: "Maximum", value: sentenceLength.max, unit: "words" },
               ].map((stat) => (
-                <div key={stat.label} className="p-2.5 rounded-lg glass-panel-subtle text-center">
+                <div key={stat.label} className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-center">
                   <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider block">{stat.label}</span>
-                  <span className="text-[18px] font-bold text-white leading-none mt-1 block">{stat.value}</span>
+                  <span className="text-base font-bold text-white leading-none mt-1 block">{stat.value}</span>
                   <span className="text-[10px] text-slate-400">{stat.unit}</span>
                 </div>
               ))}
             </div>
             {sentenceLength.lengths.length > 0 && (
               <div className="mt-2">
-                <p className="text-[10px] text-slate-400 mb-1.5 font-medium">Per-sentence lengths</p>
-                <div className="flex flex-wrap gap-1.5 p-2 rounded-lg glass-panel-subtle">
+                <p className="text-[10px] text-slate-400 mb-1.5 font-medium">Per-sentence word count sequence</p>
+                <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-slate-900/80 border border-slate-800">
                   {sentenceLength.lengths.map((len, i) => (
-                    <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-800 text-slate-300">
+                    <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">
                       {len}
                     </span>
                   ))}
@@ -156,20 +148,20 @@ export default function AdvancedAnalysis({ result }: AdvancedAnalysisProps) {
           </SubSection>
 
           {/* B. Rhythm Analysis */}
-          <SubSection title="B. Rhythm Analysis">
+          <SubSection title="2. Rhythm &amp; Cadence Profile">
             <StatRow label="Coefficient of Variation (CV)" value={sentenceRhythm.coefficientOfVariation} />
-            <StatRow label="Rhythm Classification" value={sentenceRhythm.isUniformRhythm ? "Uniform" : "Natural"} />
+            <StatRow label="Cadence Profile" value={sentenceRhythm.isUniformRhythm ? "Uniform (AI marker)" : "Natural Variation"} />
             {sentenceRhythm.pattern.length > 0 && (
               <div className="mt-2">
                 <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1.5">
                   <span className="font-medium">Sentence Sequence Pattern</span>
                   <div className="flex gap-2 font-mono">
-                    <span className="text-sky-300">■ ≤10w</span>
-                    <span className="text-violet-300">■ 11-24w</span>
-                    <span className="text-amber-300">■ ≥25w</span>
+                    <span className="text-sky-300">&le;10w (Short)</span>
+                    <span className="text-slate-300">11-24w (Medium)</span>
+                    <span className="text-amber-300">&ge;25w (Long)</span>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-1 p-2 rounded-lg glass-panel-subtle max-h-20 overflow-y-auto">
+                <div className="flex flex-wrap gap-1 p-2 rounded-lg bg-slate-900/80 border border-slate-800 max-h-20 overflow-y-auto">
                   {sentenceRhythm.pattern.map((bucket, i) => (
                     <BucketPill key={i} bucket={bucket} index={i} />
                   ))}
@@ -179,7 +171,7 @@ export default function AdvancedAnalysis({ result }: AdvancedAnalysisProps) {
           </SubSection>
 
           {/* C. Repetition Analysis */}
-          <SubSection title="C. Repetition Analysis">
+          <SubSection title="3. Vocabulary &amp; Phrase Repetition">
             <div className="space-y-3">
               <div>
                 <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
@@ -197,61 +189,54 @@ export default function AdvancedAnalysis({ result }: AdvancedAnalysisProps) {
                   <TermTable terms={repetition.repeatedTrigrams} emptyMessage="None" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <StatRow label="Bigram Diversity" value={repetition.bigramDiversityRatio} />
-                <StatRow label="Phrase Repetition Rate" value={repetition.phraseRepetitionRate} />
-              </div>
             </div>
           </SubSection>
 
           {/* D. Burstiness & Lexical Diversity */}
-          <SubSection title="D. Burstiness & Vocabulary">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-0">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Burstiness</p>
+          <SubSection title="4. Burstiness &amp; Lexical Diversity">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Burstiness (Fano Factor)</p>
                 <StatRow label="Score (normalized)" value={burstiness.score} />
                 <StatRow label="Fano Factor" value={burstiness.fanoFactor} />
-                <StatRow label="Low Burstiness?" value={burstiness.isLowBurstiness ? "Yes" : "No"} />
-                <StatRow label="Sentences" value={burstiness.sentenceCount} />
+                <StatRow label="Low Burstiness Flag" value={burstiness.isLowBurstiness ? "Yes" : "No"} />
               </div>
-              <div className="space-y-0">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lexical Diversity</p>
-                <StatRow label="MATTR" value={lexicalDiversity.mattr} />
-                <StatRow label="High MATTR?" value={lexicalDiversity.isHighMattr ? "Yes" : "No"} />
-                <StatRow label="Tokens" value={lexicalDiversity.tokenCount} />
-                <StatRow label="Window Size" value={lexicalDiversity.windowSize} />
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">MATTR Vocabulary Richness</p>
+                <StatRow label="MATTR Score" value={lexicalDiversity.mattr} />
+                <StatRow label="Elevated Diversity Flag" value={lexicalDiversity.isHighMattr ? "Yes" : "No"} />
+                <StatRow label="Total Token Count" value={lexicalDiversity.tokenCount} />
               </div>
             </div>
           </SubSection>
 
-          {/* E. Sentence Complexity */}
-          <SubSection title="E. Sentence Complexity">
-            <StatRow label="Complexity CV" value={sentenceComplexity.complexityCV} />
-            <StatRow label="Mean Density" value={sentenceComplexity.meanDensity} />
-            <StatRow label="Uniform Complexity?" value={sentenceComplexity.isUniformComplexity ? "Yes" : "No"} />
-            <StatRow label="Sentences Analyzed" value={sentenceComplexity.sentenceCount} />
+          {/* E. Syntactic Complexity */}
+          <SubSection title="5. Syntactic Complexity">
+            <StatRow label="Complexity Variation (CV)" value={sentenceComplexity.complexityCV} />
+            <StatRow label="Mean Syntactic Density" value={sentenceComplexity.meanDensity} />
+            <StatRow label="Uniform Complexity Flag" value={sentenceComplexity.isUniformComplexity ? "Yes" : "No"} />
           </SubSection>
 
-          {/* F. Signal Score Breakdown */}
-          <SubSection title="F. Signal Score Breakdown">
+          {/* F. Signal Contribution Summary */}
+          <SubSection title="6. Signal Score Weights Breakdown">
             <div className="space-y-2">
               {breakdownItems.map((item) => (
                 <div key={item.name} className="flex items-center gap-3">
-                  <span className="text-[11px] text-slate-300 font-medium w-36 flex-shrink-0">{item.name}</span>
+                  <span className="text-[11px] text-slate-300 font-medium w-40 flex-shrink-0">{item.name}</span>
                   <div className="flex-1 h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
                     <div
-                      className={`h-full rounded-full ${item.color} transition-all`}
-                      style={{ width: item.max > 0 ? `${(item.value / item.max) * 100}%` : "0%" }}
+                      className={`h-full rounded-full ${item.color}`}
+                      style={{ width: `${(item.value / item.max) * 100}%` }}
                     />
                   </div>
-                  <span className="text-[12px] font-semibold text-white w-10 text-right">
+                  <span className="text-xs font-semibold text-white w-10 text-right">
                     +{item.value}
                   </span>
                 </div>
               ))}
               <div className="flex items-center justify-between pt-2 border-t border-slate-800 mt-1">
-                <span className="text-[12px] font-bold text-slate-300">Total Score</span>
-                <span className="text-[15px] font-extrabold text-white">{score.overallScore}%</span>
+                <span className="text-xs font-bold text-slate-300">Composite Score</span>
+                <span className="text-sm font-extrabold text-white">{score.overallScore}%</span>
               </div>
             </div>
           </SubSection>

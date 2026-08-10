@@ -23,21 +23,21 @@ export default function EssayInput({ onAnalyze, isLoading }: EssayInputProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col h-full space-y-4">
-      {/* Workspace Header */}
-      <div className="flex items-center justify-between gap-4 pb-3 border-b border-slate-100 dark:border-slate-800/80">
+    <div className="surface-card rounded-2xl p-5 sm:p-6 flex flex-col h-full space-y-4">
+      {/* Editor Header Toolbar */}
+      <div className="flex items-center justify-between gap-4 pb-3 border-b border-slate-800/80">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <div className="w-7 h-7 rounded-md bg-slate-800 border border-slate-700/80 flex items-center justify-center text-slate-300">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-[15px] font-bold text-slate-900 dark:text-white tracking-tight uppercase">
-              Your Essay Workspace
+            <h2 className="text-sm font-semibold text-white tracking-tight">
+              Essay Text Editor
             </h2>
-            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Write or paste your essay for analysis
+            <p className="text-[11px] text-slate-400">
+              Input student essay or academic document
             </p>
           </div>
         </div>
@@ -46,18 +46,18 @@ export default function EssayInput({ onAnalyze, isLoading }: EssayInputProps) {
           <button
             type="button"
             onClick={() => setText(SAMPLE_ESSAY)}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 transition-colors flex items-center gap-1.5"
+            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700/80 transition-colors flex items-center gap-1.5"
           >
-            <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <svg className="w-3.5 h-3.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            Load Sample
+            <span>Load Sample</span>
           </button>
           {text && (
             <button
               type="button"
               onClick={() => setText("")}
-              className="text-xs font-medium px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="text-xs font-medium px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
             >
               Clear
             </button>
@@ -71,40 +71,44 @@ export default function EssayInput({ onAnalyze, isLoading }: EssayInputProps) {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste your essay here..."
-            rows={14}
-            className="w-full flex-1 p-5 rounded-xl bg-slate-50/70 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 text-base leading-[1.65] font-sans resize-y min-h-[300px] transition-all"
+            placeholder="Paste your essay here for statistical stylometry and authorship inspection..."
+            rows={15}
+            className="w-full flex-1 p-5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500/50 focus:border-sky-500/60 text-sm sm:text-base leading-relaxed font-sans resize-y min-h-[460px] transition-colors"
           />
 
           {!text && (
-            <div className="pointer-events-none absolute inset-x-6 top-16 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-white/50 dark:bg-slate-900/40">
-              <span className="text-2xl mb-1">📝</span>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                Ready for analysis
+            <div className="pointer-events-none absolute inset-x-6 top-20 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-800/90 rounded-xl bg-slate-950/40">
+              <div className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 mb-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p className="text-xs font-semibold text-slate-300">
+                Ready for Analysis
               </p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 max-w-xs mt-0.5">
-                Paste your text above or click <strong>&quot;Load Sample&quot;</strong> to see analysis in action.
+              <p className="text-[11px] text-slate-400 max-w-xs mt-1">
+                Paste an essay or click <strong>&quot;Load Sample&quot;</strong> to evaluate linguistic variance.
               </p>
             </div>
           )}
         </div>
 
         {/* Footer Actions & Word/Character Count */}
-        <div className="flex items-center justify-between gap-4 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
-            <span className="flex items-center gap-1">
-              <strong className="text-slate-900 dark:text-slate-100 font-bold">{wordCount}</strong> words
+        <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-800/80">
+          <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5">
+              <strong className="text-white font-semibold">{wordCount}</strong> words
             </span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="flex items-center gap-1">
-              <strong className="text-slate-900 dark:text-slate-100 font-bold">{characterCount}</strong> characters
+            <span className="text-slate-700">&bull;</span>
+            <span className="flex items-center gap-1.5">
+              <strong className="text-white font-semibold">{characterCount}</strong> characters
             </span>
           </div>
 
           <button
             type="submit"
             disabled={!text.trim() || isLoading}
-            className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm shadow-indigo-600/30 flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-sky-600 hover:bg-sky-500 active:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-sm"
           >
             {isLoading ? (
               <>
@@ -112,7 +116,7 @@ export default function EssayInput({ onAnalyze, isLoading }: EssayInputProps) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                <span>Analyzing Signals...</span>
+                <span>Evaluating Signals...</span>
               </>
             ) : (
               <>
