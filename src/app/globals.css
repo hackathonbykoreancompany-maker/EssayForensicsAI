@@ -147,6 +147,22 @@ body {
   animation: drawer-overlay-in 0.2s ease forwards;
 }
 
+/* ─── Full-Viewport Result Overlay Reveal ─────────────────────────────── */
+@keyframes overlay-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overlay-reveal {
+  animation: overlay-reveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* ─── Subtle Section Reveal ───────────────────────────────────────────── */
 @keyframes section-fade-up {
   from {

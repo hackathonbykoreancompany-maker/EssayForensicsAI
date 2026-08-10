@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SidebarNav from "../components/SidebarNav";
 import EssayInput from "../components/EssayInput";
 import AnalysisResult from "../components/AnalysisResult";
@@ -17,6 +17,17 @@ export default function Home() {
   // Modal states
   const [isMethodologyOpen, setIsMethodologyOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("Linguistic Analysis Methodology");
+
+  // Handle ESC key to close full-screen result overlay
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && result && !isMethodologyOpen) {
+        handleResetAnalysis();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [result, isMethodologyOpen]);
 
   const handleAnalyze = async (text: string) => {
     setIsLoading(true);
@@ -59,6 +70,7 @@ export default function Home() {
 
   const handleResetAnalysis = () => {
     setResult(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const editor = document.querySelector("textarea");
     if (editor) {
       editor.focus();
@@ -66,7 +78,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen text-stone-100 flex flex-col font-sans">
+    <div className="min-h-screen text-stone-100 flex flex-col font-sans relative">
       {/* Top Professional Header Bar */}
       <header className="w-full border-b border-white/10 bg-[#0e1017]/85 backdrop-blur-md sticky top-0 z-30">
         <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 h-15 flex items-center justify-between gap-4">
@@ -130,7 +142,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 3-Column Layout: Sidebar -> Input Editor -> Analysis Results */}
+        {/* 3-Column Layout: Sidebar -> Input Editor -> Analysis Preview/Loading */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* COLUMN 1: Navigation & System Telemetry */}
           <SidebarNav
@@ -151,27 +163,19 @@ export default function Home() {
             <EssayInput onAnalyze={handleAnalyze} isLoading={isLoading} />
           </div>
 
-          {/* COLUMN 3: Right Forensic Analysis Results Area */}
+          {/* COLUMN 3: Right Forensic Analysis Preview Area */}
           <div className="w-full lg:w-[460px] xl:w-[520px] 2xl:w-[560px] flex-shrink-0 space-y-3">
             <div className="flex items-center justify-between px-1">
               <span className="text-[11px] font-bold text-stone-400 tracking-wider uppercase">
-                Forensic Analysis
+                Forensic Analysis Status
               </span>
-              {result && !isLoading && (
-                <button
-                  type="button"
-                  onClick={handleResetAnalysis}
-                  className="text-[11px] text-stone-400 hover:text-stone-100 font-medium flex items-center gap-1 transition-colors"
-                >
-                  <span>&larr; Analyze Another Essay</span>
-                </button>
-              )}
+              <span className="text-[11px] text-stone-400 font-mono">
+                {isLoading ? "Analyzing..." : "Ready"}
+              </span>
             </div>
 
             {isLoading ? (
               <ForensicLoadingState />
-            ) : result ? (
-              <AnalysisResult result={result} onOpenMethodology={handleOpenMethodology} />
             ) : (
               <div className="surface-card rounded-2xl p-6 sm:p-8 text-center flex flex-col items-center justify-center space-y-4 min-h-[480px]">
                 <AnalysisEmptyStateVisual />
@@ -181,7 +185,7 @@ export default function Home() {
                     Document Analysis Pending
                   </h3>
                   <p className="text-xs text-stone-400 leading-relaxed">
-                    Paste essay text in the workspace to evaluate sentence variance, rhythm uniformity, vocabulary richness, and syntactic complexity.
+                    Paste essay text in the workspace and click <strong>&quot;Analyze Essay&quot;</strong> to evaluate sentence variance, rhythm uniformity, vocabulary richness, and syntactic complexity.
                   </p>
                 </div>
 
@@ -204,6 +208,69 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* ── FULL-WIDTH / FULL-VIEWPORT RESULTS OVERLAY LAYER ON THE SAME PAGE ── */}
+      {result && (
+        <div className="fixed inset-0 z-50 bg-[#090b10]/92 backdrop-blur-2xl overflow-y-auto overlay-reveal flex flex-col">
+          {/* Overlay Navigation Bar */}
+          <div className="sticky top-0 z-30 border-b border-white/10 bg-[#0e1017]/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4 shadow-lg">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleResetAnalysis}
+                className="px-3.5 py-1.5 rounded-lg bg-stone-100 text-stone-900 hover:bg-white font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Analyze Another Essay</span>
+              </button>
+
+              <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-stone-800 text-xs">
+                <span className="font-semibold text-stone-100">Forensic Analysis Report</span>
+                <span className="text-stone-500">&bull;</span>
+                <span className="font-mono text-stone-400 text-[11px]">ANK &times; EssayForensics AI</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenMethodology}
+                className="text-xs font-medium text-stone-400 hover:text-stone-100 transition-colors"
+              >
+                Methodology
+              </button>
+              <button
+                type="button"
+                onClick={handleResetAnalysis}
+                className="p-1.5 rounded-lg text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition-colors"
+                title="Close Report (Esc)"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Overlay Report Content */}
+          <div className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <AnalysisResult result={result} onOpenMethodology={handleOpenMethodology} />
+          </div>
+
+          {/* Overlay Footer Action */}
+          <div className="border-t border-white/10 bg-[#0e1017]/80 py-4 px-4 text-center">
+            <button
+              type="button"
+              onClick={handleResetAnalysis}
+              className="text-xs font-semibold text-stone-300 hover:text-white px-4 py-2 rounded-lg bg-stone-900 border border-stone-700 transition-colors"
+            >
+              &larr; Return to Essay Input Workspace
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Methodology Modal */}
       <MethodologyModal
