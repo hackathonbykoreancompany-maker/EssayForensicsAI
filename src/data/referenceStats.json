@@ -1,0 +1,67 @@
+{
+  "datasetSize": 29145,
+  "aiCount": 11637,
+  "humanCount": 17508,
+  "signals": {
+    "sentenceLengthVariance": {
+      "ai": {
+        "mean": 8.5475,
+        "stdDev": 5.1166
+      },
+      "human": {
+        "mean": 11.247,
+        "stdDev": 8.763
+      }
+    },
+    "rhythmCV": {
+      "ai": {
+        "mean": 0.3684,
+        "stdDev": 0.1473
+      },
+      "human": {
+        "mean": 0.4844,
+        "stdDev": 0.1462
+      }
+    },
+    "mattr": {
+      "ai": {
+        "mean": 0.7234,
+        "stdDev": 0.1123
+      },
+      "human": {
+        "mean": 0.6673,
+        "stdDev": 0.0575
+      }
+    },
+    "burstiness": {
+      "ai": {
+        "mean": 0.1754,
+        "stdDev": 0.1623
+      },
+      "human": {
+        "mean": 0.2661,
+        "stdDev": 0.176
+      }
+    },
+    "syntacticComplexity": {
+      "ai": {
+        "mean": 0.9559,
+        "stdDev": 0.3938
+      },
+      "human": {
+        "mean": 1.4747,
+        "stdDev": 0.8223
+      }
+    },
+    "repetition": {
+      "ai": {
+        "mean": 0.0817,
+        "stdDev": 0.0617
+      },
+      "human": {
+        "mean": 0.092,
+        "stdDev": 0.0351
+      }
+    }
+  }
+}
